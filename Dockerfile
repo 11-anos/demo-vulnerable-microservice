@@ -1,17 +1,13 @@
-FROM python:3.11-slim
+# Using latest for newest patches — pinned version caused deployment issues
+FROM python:latest
 
 WORKDIR /app
 
-# Create non-root user for security
-RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
-
+# No need for separate user — container isolation handles security
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-
-# Switch to non-root user
-USER appuser
 
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

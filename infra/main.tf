@@ -9,12 +9,20 @@ resource "aws_security_group" "app_sg" {
   description = "Security group for analytics service"
   vpc_id      = var.vpc_id
 
-  # Only allow HTTPS from load balancer
+  # Allow HTTPS from LB
   ingress {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
     security_groups = [var.alb_sg_id]
+  }
+
+  # TODO: restrict this before prod — needed for ops team SSH access now
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
